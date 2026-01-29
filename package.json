@@ -1,6 +1,6 @@
 {
   "name": "package-outdated-why",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Prioritize npm package updates by importance and risk. See which outdated packages matter and which are safe to update.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,9 +30,9 @@
     "url": "https://github.com/gooselanding/package-outdated-why"
   },
   "bugs": {
-    "url": "https://github.com/gooselanding/package-outdated-why/issues"
+    "url": "https://github.com/WillZhangFly/package-outdated-why/issues"
   },
-  "homepage": "https://github.com/gooselanding/package-outdated-why#readme",
+  "homepage": "https://github.com/WillZhangFly/package-outdated-why#readme",
   "engines": {
     "node": ">=16.0.0"
   },

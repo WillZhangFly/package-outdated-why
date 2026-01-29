@@ -7,6 +7,8 @@ The only tool that combines **outdated packages** + **security vulnerabilities**
 [![npm version](https://img.shields.io/npm/v/package-outdated-why.svg)](https://www.npmjs.com/package/package-outdated-why)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+> **Original Repository:** [WillZhangFly/package-outdated-why](https://github.com/WillZhangFly/package-outdated-why)
+
 ---
 
 ## The Problem
