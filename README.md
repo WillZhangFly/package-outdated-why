@@ -331,7 +331,7 @@ for (const pkg of result.critical) {
 
 If it saved you time, consider:
 
-💚 **[Buy Me a Coffee](https://buymeacoffee.com/gooselanding)**
+💚 **[Buy Me a Coffee](https://buymeacoffee.com/willzhangfly)**
 
 ---
 

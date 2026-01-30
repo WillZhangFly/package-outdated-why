@@ -1,6 +1,6 @@
 {
   "name": "package-outdated-why",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Prioritize npm package updates by importance and risk. See which outdated packages matter and which are safe to update.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,16 +23,20 @@
     "cli",
     "devtools"
   ],
-  "author": "gooselanding",
+  "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gooselanding/package-outdated-why"
+    "url": "https://github.com/willzhangfly/package-outdated-why"
   },
   "bugs": {
-    "url": "https://github.com/WillZhangFly/package-outdated-why/issues"
+    "url": "https://github.com/willzhangfly/package-outdated-why/issues"
   },
-  "homepage": "https://github.com/WillZhangFly/package-outdated-why#readme",
+  "homepage": "https://github.com/willzhangfly/package-outdated-why#readme",
+  "funding": {
+    "type": "buymeacoffee",
+    "url": "https://buymeacoffee.com/willzhangfly"
+  },
   "engines": {
     "node": ">=16.0.0"
   },
