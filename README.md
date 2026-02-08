@@ -2,12 +2,19 @@
 
 **`npm outdated` shows 50 packages. Which ones MATTER?**
 
-The only tool that combines **outdated packages** + **security vulnerabilities** + **breaking change context** into one prioritized view.
+The only tool that combines **outdated packages** + **security vulnerabilities** + **breaking change context** + **dependency freshness** into one prioritized view.
 
 [![npm version](https://img.shields.io/npm/v/package-outdated-why.svg)](https://www.npmjs.com/package/package-outdated-why)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **Original Repository:** [WillZhangFly/package-outdated-why](https://github.com/WillZhangFly/package-outdated-why)
+---
+
+## What's New in v0.2.0
+
+- **Libyear Metrics** - Track how "stale" your dependencies are (inspired by [libyear.com](https://libyear.com))
+- **Unused Detection** - Find dependencies you're not actually using
+- **Health Check** - Identify deprecated and unmaintained packages
+- **Full Analysis** - Run all checks at once with `full` command
 
 ---
 
@@ -28,7 +35,8 @@ eslint           8.56.0   8.57.0  9.0.0
 - Which ones have security issues? 🔒
 - Which ones will break my code? 💥
 - Which ones are safe to update? ✅
-- Where do I even start? 🤷
+- How old are my dependencies? 📅
+- Am I using all of them? 🔍
 
 ---
 
@@ -44,74 +52,43 @@ npx package-outdated-why
 │   Know which updates actually matter    │
 │                                         │
 │   Security Score: 65/100                │
+│   Freshness Score: 72/100               │
 ╰─────────────────────────────────────────╯
 
 📊 Summary:
    Total outdated: 50
    🔴 Critical: 2  🟡 Important: 8  🟢 Safe: 35  ⏭️ Skip: 5
 
-💡 Recommendation:
-   🚨 Fix 2 critical vulnerabilities immediately!
-   Estimated effort: ~4 hours
+📅 Dependency Freshness:
+   Total drift: 3.2 libyears
+   Most outdated: lodash (1.5 years)
 
 🔴 CRITICAL - Update immediately:
-   Security vulnerabilities that need fixing NOW
-
    • lodash: 4.17.20 → 4.17.21 [EASY]
      Security vulnerability (high): Prototype Pollution
-     Why it matters: This package has a known security flaw that attackers
-     could exploit. High severity issues can compromise your application security.
      ⚠️  [HIGH] CVE-2021-23337
-        → https://github.com/advisories/GHSA-35jh-r3h4-6jhm
-     → npm install lodash@latest
 
 🟡 IMPORTANT - Review before updating:
-   Breaking changes or security advisories
-
    • react: 17.0.2 → 18.2.0 [MEDIUM]
-     Major update: Concurrent rendering, automatic batching, new hooks
-     Why it matters: Version 18 includes breaking changes. Watch out for:
-     StrictMode double-renders, Suspense changes.
+     Major update: Concurrent rendering, automatic batching
      📚 Migration guide: https://react.dev/blog/2022/03/29/react-v18
-     → npm install react@latest
-
-   • eslint: 8.57.0 → 9.0.0 [HIGH EFFORT]
-     Major update: Flat config required, Node.js 18+, removed formatters
-     Why it matters: Version 9 includes breaking changes. Watch out for:
-     eslintrc deprecated, Many plugins need updates.
-     📚 Migration guide: https://eslint.org/docs/latest/use/migrate-to-9.0.0
-     → npm install eslint@latest
-
-🟢 SAFE - Update anytime:
-   • axios: 1.6.0 → 1.6.7 (Patch update - bug fixes only)
-   • chalk: 5.3.0 → 5.4.0 (Minor update - new features)
-
-⏭️ SKIP - Low priority (5 dev deps):
-   @types/node, @types/jest, prettier, husky, lint-staged
-
-⚡ Quick Commands:
-
-   # Fix security issues:
-   npm audit fix --force
-
-   # Update safe packages:
-   npm update
 ```
 
 ---
 
 ## Why This Tool?
 
-| Tool | Outdated | Security | Breaking Changes | Migration Guides | Effort Estimate |
-|------|----------|----------|------------------|------------------|-----------------|
-| `npm outdated` | ✅ | ❌ | ❌ | ❌ | ❌ |
-| `npm audit` | ❌ | ✅ | ❌ | ❌ | ❌ |
-| `npm-check-updates` | ✅ | ❌ | Color only | ❌ | ❌ |
-| `npm-check` | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Snyk | ❌ | ✅ | ❌ | ❌ | ❌ |
-| **package-outdated-why** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Tool | Outdated | Security | Breaking Changes | Libyear | Unused | Health |
+|------|----------|----------|------------------|---------|--------|--------|
+| `npm outdated` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `npm audit` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `npm-check-updates` | ✅ | ❌ | Color only | ❌ | ❌ | ❌ |
+| `npm-check` | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| `libyear` | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `depcheck` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **package-outdated-why** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-**We're the only tool that tells you WHY each update matters.**
+**We're the only tool that combines everything into one command.**
 
 ---
 
@@ -151,6 +128,81 @@ npx package-outdated-why -f json
 npx package-outdated-why --ci
 ```
 
+### `libyear`
+
+Measure dependency freshness:
+
+```bash
+npx package-outdated-why libyear
+```
+
+```
+📅 Dependency Freshness (Libyear Metrics)
+
+   Total drift: 3.2 libyears
+   Average age: 0.15 years per dependency
+   Most outdated: lodash (1.5 years)
+
+   📊 Version breakdown:
+      Major: 5 behind
+      Minor: 12 behind
+      Patch: 8 behind
+
+   Freshness Score: 72/100
+```
+
+### `unused`
+
+Find unused dependencies:
+
+```bash
+npx package-outdated-why unused
+```
+
+```
+🔍 Dependency Analysis
+
+   ⚠️  Potentially unused (3):
+      • lodash
+      • moment
+      • underscore
+
+   📦 Dev packages in dependencies:
+      • @types/node → move to devDependencies
+```
+
+### `health`
+
+Check package health:
+
+```bash
+npx package-outdated-why health
+```
+
+```
+🏥 Package Health Check
+
+   ⛔ Deprecated packages (1):
+      • request - find alternative!
+
+   😴 Unmaintained (2+ years) (2):
+      • moment
+      • node-uuid
+
+   ✅ 45 packages are healthy!
+```
+
+### `full`
+
+Run all checks at once:
+
+```bash
+npx package-outdated-why full
+
+# Save comprehensive report
+npx package-outdated-why full -o full-report.md
+```
+
 ### `quick`
 
 Just the numbers:
@@ -182,21 +234,6 @@ Get commands in order of priority:
 npx package-outdated-why fix
 ```
 
-```
-🔧 Fix Commands (in order of priority):
-
-1. Critical security fixes:
-   npm install lodash@latest
-   npm install minimist@latest
-
-2. Important updates (one at a time):
-   npm install react@latest
-   # See: https://react.dev/blog/2022/03/29/react-v18
-
-3. Safe updates (batch):
-   npm update
-```
-
 ### `why <package>`
 
 Deep dive into a specific package:
@@ -205,29 +242,55 @@ Deep dive into a specific package:
 npx package-outdated-why why react
 ```
 
+---
+
+## Programmatic Usage
+
+```typescript
+import {
+  analyzePackages,
+  calculateLibyearMetrics,
+  detectUnused,
+  getHealthSummary
+} from 'package-outdated-why';
+
+// Full analysis
+const result = analyzePackages();
+console.log(`Security Score: ${result.securityScore}/100`);
+console.log(`Critical: ${result.critical.length}`);
+
+// Libyear metrics
+const libyear = calculateLibyearMetrics(outdated);
+console.log(`Total drift: ${libyear.totalLibyears} libyears`);
+console.log(`Freshness: ${libyear.freshnessScore}/100`);
+
+// Unused detection
+const unused = detectUnused();
+console.log(`Unused: ${unused.unused.join(', ')}`);
+
+// Health check
+const health = getHealthSummary(packageNames);
+console.log(`Deprecated: ${health.deprecated.join(', ')}`);
 ```
-📦 react
 
-   Version: 17.0.2 → 18.2.0
-   Priority: IMPORTANT
-   Type: dependency
-   Effort: medium
-   Risk Score: 50/100
+---
 
-   Why update?
-   Major update: Concurrent rendering, automatic batching, new hooks
+## CI/CD Integration
 
-   Why it matters:
-   Version 18 includes breaking changes. Watch out for:
-   StrictMode double-renders, Suspense changes.
+### GitHub Actions
 
-   Known issues:
-   - StrictMode double-renders
-   - Suspense changes
+```yaml
+- name: Check dependencies
+  run: npx package-outdated-why --ci
 
-   📚 Migration guide: https://react.dev/blog/2022/03/29/react-v18
+- name: Generate full report
+  run: npx package-outdated-why full -o deps-report.md
 
-   Update: npm install react@latest
+- name: Upload report
+  uses: actions/upload-artifact@v3
+  with:
+    name: dependency-report
+    path: deps-report.md
 ```
 
 ---
@@ -235,31 +298,40 @@ npx package-outdated-why why react
 ## How It Works
 
 ### 🔴 Critical (Update Immediately)
-
-**Security vulnerabilities** from `npm audit`:
-- CVE/GHSA advisories
-- Known exploits
-- Data exposure risks
+**Security vulnerabilities** from `npm audit`
 
 ### 🟡 Important (Review First)
-
-**Breaking changes** with context:
-- Major version updates
-- Migration guide links for 40+ popular packages
-- Known issues to watch for
-- Effort estimate (low/medium/high)
+**Breaking changes** with migration guides for 40+ packages
 
 ### 🟢 Safe (Update Anytime)
-
-**Backward-compatible** changes:
-- Minor: New features
-- Patch: Bug fixes
+**Backward-compatible** patch/minor updates
 
 ### ⏭️ Skip (Low Priority)
+**Dev dependencies** with low risk
 
-**Dev dependencies** with low risk:
-- Won't affect production
-- Update when convenient
+### 📅 Libyear Metrics
+- **Total drift**: Sum of years each package is behind
+- **Freshness Score**: 0-100 (100 = all current)
+- **Pulse**: Days since latest update available
+
+---
+
+## Changelog
+
+### v0.2.0
+- Added `libyear` command for dependency freshness metrics
+- Added `unused` command to detect unused dependencies
+- Added `health` command to check for deprecated/unmaintained packages
+- Added `full` command to run all analyses
+- Added freshness score to summary
+- Improved TypeScript types and exports
+
+### v0.1.0
+- Initial release
+- Outdated package analysis
+- Security vulnerability detection
+- Breaking change context with migration guides
+- Effort estimation
 
 ---
 
@@ -275,53 +347,6 @@ Migration guides and effort estimates for **40+ popular packages**:
 | **Backend** | Express, Fastify, Hono |
 | **Database** | Mongoose, Prisma, Sequelize, TypeORM |
 | **UI** | Tailwind CSS, MUI, Chakra UI |
-| **State** | Zustand, Redux, TanStack Query |
-| **Utils** | Axios, Lodash, date-fns, Zod |
-
----
-
-## CI/CD Integration
-
-### GitHub Actions
-
-```yaml
-- name: Check dependencies
-  run: npx package-outdated-why --ci
-```
-
-The `--ci` flag exits with code 1 if critical vulnerabilities are found.
-
-### Generate Report
-
-```yaml
-- name: Generate dependency report
-  run: npx package-outdated-why -f markdown -o deps-report.md
-
-- name: Upload report
-  uses: actions/upload-artifact@v3
-  with:
-    name: dependency-report
-    path: deps-report.md
-```
-
----
-
-## Programmatic Usage
-
-```typescript
-import { analyzePackages } from 'package-outdated-why';
-
-const result = analyzePackages();
-
-console.log(`Security Score: ${result.securityScore}/100`);
-console.log(`Critical: ${result.critical.length}`);
-console.log(`Effort: ${result.summary.estimatedEffort}`);
-
-// Get details on each package
-for (const pkg of result.critical) {
-  console.log(`${pkg.package.name}: ${pkg.whyItMatters}`);
-}
-```
 
 ---
 
@@ -343,12 +368,13 @@ MIT
 
 ## Contributing
 
-Contributions welcome! [GitHub](https://github.com/gooselanding/package-outdated-why)
+Contributions welcome! [GitHub](https://github.com/willzhangfly/package-outdated-why)
 
 **PRs especially welcome for:**
 - Adding migration guides for more packages
 - Improving effort estimates
 - Better security advisory detection
+- Unused detection improvements
 
 ---
 

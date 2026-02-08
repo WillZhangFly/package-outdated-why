@@ -53,6 +53,34 @@ export interface PackageAnalysis {
   effort: 'low' | 'medium' | 'high';
 }
 
+export interface LibyearMetrics {
+  totalLibyears: number;
+  avgLibyears: number;
+  maxLibyears: number;
+  mostOutdated?: string;
+  driftDays: number;
+  pulse: number;
+  releasesBehind: number;
+  majorsBehind: number;
+  minorsBehind: number;
+  patchesBehind: number;
+  freshnessScore: number;
+}
+
+export interface UnusedResult {
+  unused: string[];
+  missing: string[];
+  devInDeps: string[];
+  depsInDev: string[];
+}
+
+export interface HealthSummary {
+  deprecated: string[];
+  unmaintained: string[];
+  lowUsage: string[];
+  healthy: number;
+}
+
 export interface AnalysisResult {
   critical: PackageAnalysis[];
   important: PackageAnalysis[];
@@ -62,6 +90,9 @@ export interface AnalysisResult {
   totalPackages: number;
   securityScore: number; // 0-100, higher = healthier
   summary: AnalysisSummary;
+  libyear?: LibyearMetrics;
+  unused?: UnusedResult;
+  health?: HealthSummary;
 }
 
 export interface AnalysisSummary {

@@ -10,6 +10,10 @@ import {
   formatJsonOutput,
   formatMarkdownOutput,
 } from './formatter';
+import { calculateLibyearMetrics, formatLibyearSummary } from './libyear';
+import { detectUnused, formatUnusedResults } from './unused';
+import { getHealthSummary, formatHealthSummary } from './health';
+import { getOutdatedPackages } from './outdated';
 
 const program = new Command();
 
@@ -241,6 +245,146 @@ program
       console.log('');
     } catch (error: any) {
       spinner.fail(chalk.red('Check failed'));
+      console.error(chalk.red(error.message));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('libyear')
+  .alias('age')
+  .description('Show dependency freshness metrics (libyear)')
+  .action(async () => {
+    const spinner = ora('Calculating dependency age...').start();
+
+    try {
+      const outdated = getOutdatedPackages();
+      spinner.text = `Analyzing ${outdated.length} outdated packages...`;
+
+      const metrics = calculateLibyearMetrics(outdated);
+      spinner.stop();
+
+      console.log('');
+      console.log(formatLibyearSummary(metrics));
+      console.log('');
+
+      if (metrics.totalLibyears > 5) {
+        console.log(chalk.yellow('   💡 Tip: Consider updating packages that are > 1 year behind'));
+      }
+    } catch (error: any) {
+      spinner.fail(chalk.red('Analysis failed'));
+      console.error(chalk.red(error.message));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('unused')
+  .alias('u')
+  .description('Detect unused dependencies')
+  .action(async () => {
+    const spinner = ora('Scanning for unused dependencies...').start();
+
+    try {
+      const result = detectUnused();
+      spinner.stop();
+
+      console.log('');
+      console.log(formatUnusedResults(result));
+      console.log('');
+
+      if (result.unused.length > 0) {
+        console.log(chalk.gray('   💡 Remove unused: npm uninstall ' + result.unused.slice(0, 3).join(' ')));
+        console.log('');
+      }
+    } catch (error: any) {
+      spinner.fail(chalk.red('Scan failed'));
+      console.error(chalk.red(error.message));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('health')
+  .alias('h')
+  .description('Check package health (deprecated, unmaintained)')
+  .action(async () => {
+    const spinner = ora('Checking package health...').start();
+
+    try {
+      // Get all deps from package.json
+      const pkgJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+      const deps = Object.keys(pkgJson.dependencies || {});
+      const devDeps = Object.keys(pkgJson.devDependencies || {});
+
+      spinner.text = `Checking ${deps.length + devDeps.length} packages...`;
+
+      const summary = getHealthSummary([...deps, ...devDeps]);
+      spinner.stop();
+
+      console.log('');
+      console.log(formatHealthSummary(summary));
+      console.log('');
+    } catch (error: any) {
+      spinner.fail(chalk.red('Health check failed'));
+      console.error(chalk.red(error.message));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('full')
+  .description('Run all checks (outdated + libyear + unused + health)')
+  .option('-o, --output <file>', 'Save report to file')
+  .action(async (options) => {
+    const spinner = ora('Running full analysis...').start();
+
+    try {
+      // Run all analyses
+      spinner.text = 'Checking outdated packages...';
+      const result = analyzePackages();
+
+      spinner.text = 'Calculating dependency age...';
+      const outdated = getOutdatedPackages();
+      const libyear = calculateLibyearMetrics(outdated);
+
+      spinner.text = 'Detecting unused dependencies...';
+      const unused = detectUnused();
+
+      spinner.text = 'Checking package health...';
+      const pkgJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+      const allDeps = [
+        ...Object.keys(pkgJson.dependencies || {}),
+        ...Object.keys(pkgJson.devDependencies || {}),
+      ];
+      const health = getHealthSummary(allDeps);
+
+      spinner.succeed('Analysis complete');
+
+      // Output
+      console.log(formatConsoleOutput(result));
+      console.log('');
+      console.log(formatLibyearSummary(libyear));
+      console.log('');
+      console.log(formatUnusedResults(unused));
+      console.log('');
+      console.log(formatHealthSummary(health));
+
+      if (options.output) {
+        const fullReport = [
+          formatMarkdownOutput(result),
+          '## Libyear Metrics',
+          formatLibyearSummary(libyear),
+          '## Unused Dependencies',
+          formatUnusedResults(unused),
+          '## Package Health',
+          formatHealthSummary(health),
+        ].join('\n\n');
+        fs.writeFileSync(options.output, fullReport);
+        console.log(chalk.green(`\n✅ Full report saved to ${options.output}`));
+      }
+    } catch (error: any) {
+      spinner.fail(chalk.red('Analysis failed'));
       console.error(chalk.red(error.message));
       process.exit(1);
     }
